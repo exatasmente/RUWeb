@@ -31,6 +31,7 @@ public class ControleCardapio implements Controle<Cardapio> {
     @Override
     public void add(Cardapio cardapio) throws ClassNotFoundException, SQLException {
         CardapioDAO dao = new CardapioDAO();
+        System.out.println(cardapio);
         dao.add(cardapio);
 
 
@@ -53,8 +54,11 @@ public class ControleCardapio implements Controle<Cardapio> {
 
     @Override
     public String get(int id) throws ClassNotFoundException, SQLException {
+        return null;
+    }
+    public String get(String data) throws ClassNotFoundException, SQLException {
         CardapioDAO dao = new CardapioDAO();
-        Cardapio a = dao.get(id);
+        Cardapio a = dao.get(data);
         String jsonStr = "{\"message\" : \"Internal Error \", \"Status\" : \"500\"}";
         ObjectMapper mapperObj = new ObjectMapper();
         try {

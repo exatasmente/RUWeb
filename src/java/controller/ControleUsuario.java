@@ -30,7 +30,7 @@ public class ControleUsuario implements Controle<Usuario> {
 
     @Override
     public void add(Usuario usuario) throws ClassNotFoundException, SQLException {
-        UsuarioDAO dao = new UsuarioDAO();
+        UsuarioDAO dao = new UsuarioDAO();        
         dao.add(usuario);
 
 

@@ -5,11 +5,13 @@
  */
 package model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author root
  */
-public class Cartao {
+public class Cartao implements Serializable {
     int numero;
     float saldo;
     public Cartao(){

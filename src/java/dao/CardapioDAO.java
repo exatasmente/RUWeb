@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 
 import model.Cardapio;
 import model.Refeicao;
+import model.TipoRefeicao;
 
 /**
  *
@@ -73,7 +74,7 @@ public class CardapioDAO implements Dao<Cardapio> {
         PreparedStatement ps = con.prepareStatement("insert into CARDAPIO (dia_semana,horario)\n"
                 + "values  (?,?) returning id ");
         ps.setDate(1, Date.valueOf(cardapio.getData()));
-        ps.setInt(2, 1);
+        ps.setInt(2, 2);
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             HashMap<Integer, HashMap<String, ArrayList<Refeicao>>> dados = cardapio.getDesjejum();
@@ -125,55 +126,63 @@ public class CardapioDAO implements Dao<Cardapio> {
                 r.setId(rs.getInt("id_refeicao"));
                 r.setInfoNutricional(rs.getString("info_nutricional"));
                 r.setNome(rs.getString("nome_refeicao"));
-                r.setTipo(rs.getString("nome_tipo"));
+                r.setTipo(new TipoRefeicao(rs.getInt("id_tipo"), rs.getString("nome_tipo")));
+                ps = con.prepareStatement("SELECT * FROM OBS_REFEICAO  WHERE id_refeicao = ?");
+                ps.setInt(1, r.getId());
+                ResultSet rs2 = ps.executeQuery();
+                ArrayList<String> obs = new ArrayList<>();
+                while (rs2.next()) {
+                    obs.add(rs2.getString("valor"));
+                }
+                r.setObservacoes(obs.toArray(new String[obs.size()]));
                 switch (horario) {
                     case 1:
 
                         if (cardapio.getDesjejum().get(horario) != null) {
-                            if (cardapio.getDesjejum().get(horario).get(r.getTipo()) != null) {
-                                cardapio.getDesjejum().get(horario).get(r.getTipo()).add(r);
+                            if (cardapio.getDesjejum().get(horario).get(r.getTipo().getValor()) != null) {
+                                cardapio.getDesjejum().get(horario).get(r.getTipo().getValor()).add(r);
                             } else {
-                                cardapio.getDesjejum().get(horario).put(r.getTipo(), new ArrayList<Refeicao>());
-                                cardapio.getDesjejum().get(horario).get(r.getTipo()).add(r);
+                                cardapio.getDesjejum().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                                cardapio.getDesjejum().get(horario).get(r.getTipo().getValor()).add(r);
                             }
 
                         } else {
                             cardapio.getDesjejum().put(horario, new HashMap<String, ArrayList<Refeicao>>());
-                            cardapio.getDesjejum().get(horario).put(r.getTipo(), new ArrayList<Refeicao>());
-                            cardapio.getDesjejum().get(horario).get(r.getTipo()).add(r);
+                            cardapio.getDesjejum().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                            cardapio.getDesjejum().get(horario).get(r.getTipo().getValor()).add(r);
                         }
 
                         break;
                     case 2:
 
                         if (cardapio.getAlmoco().get(horario) != null) {
-                            if (cardapio.getAlmoco().get(horario).get(r.getTipo()) != null) {
-                                cardapio.getAlmoco().get(horario).get(r.getTipo()).add(r);
+                            if (cardapio.getAlmoco().get(horario).get(r.getTipo().getValor()) != null) {
+                                cardapio.getAlmoco().get(horario).get(r.getTipo().getValor()).add(r);
                             } else {
-                                cardapio.getAlmoco().get(horario).put(r.getTipo(), new ArrayList<Refeicao>());
-                                cardapio.getAlmoco().get(horario).get(r.getTipo()).add(r);
+                                cardapio.getAlmoco().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                                cardapio.getAlmoco().get(horario).get(r.getTipo().getValor()).add(r);
                             }
 
                         } else {
                             cardapio.getAlmoco().put(horario, new HashMap<String, ArrayList<Refeicao>>());
-                            cardapio.getAlmoco().get(horario).put(r.getTipo(), new ArrayList<Refeicao>());
-                            cardapio.getAlmoco().get(horario).get(r.getTipo()).add(r);
+                            cardapio.getAlmoco().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                            cardapio.getAlmoco().get(horario).get(r.getTipo().getValor()).add(r);
                         }
                         break;
                     case 3:
 
                         if (cardapio.getJanta().get(horario) != null) {
-                            if (cardapio.getJanta().get(horario).get(r.getTipo()) != null) {
-                                cardapio.getJanta().get(horario).get(r.getTipo()).add(r);
+                            if (cardapio.getJanta().get(horario).get(r.getTipo().getValor()) != null) {
+                                cardapio.getJanta().get(horario).get(r.getTipo().getValor()).add(r);
                             } else {
-                                cardapio.getJanta().get(horario).put(r.getTipo(), new ArrayList<Refeicao>());
-                                cardapio.getJanta().get(horario).get(r.getTipo()).add(r);
+                                cardapio.getJanta().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                                cardapio.getJanta().get(horario).get(r.getTipo().getValor()).add(r);
                             }
 
                         } else {
                             cardapio.getJanta().put(horario, new HashMap<String, ArrayList<Refeicao>>());
-                            cardapio.getJanta().get(horario).put(r.getTipo(), new ArrayList<Refeicao>());
-                            cardapio.getJanta().get(horario).get(r.getTipo()).add(r);
+                            cardapio.getJanta().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                            cardapio.getJanta().get(horario).get(r.getTipo().getValor()).add(r);
                         }
                         break;
                 }
@@ -184,55 +193,63 @@ public class CardapioDAO implements Dao<Cardapio> {
                 r.setId(rs.getInt("id_refeicao"));
                 r.setInfoNutricional(rs.getString("info_nutricional"));
                 r.setNome(rs.getString("nome_refeicao"));
-                r.setTipo(rs.getString("nome_tipo"));
+                r.setTipo(new TipoRefeicao(rs.getInt("id_tipo"), rs.getString("nome_tipo")));
+                ps = con.prepareStatement("SELECT * FROM OBS_REFEICAO  WHERE id_refeicao = ?");
+                ps.setInt(1, r.getId());
+                ResultSet rs2 = ps.executeQuery();
+                ArrayList<String> obs = new ArrayList<>();
+                while (rs2.next()) {
+                    obs.add(rs2.getString("valor"));
+                }
+                r.setObservacoes(obs.toArray(new String[obs.size()]));
                 switch (horario) {
                     case 1:
 
                         if (cardapio.getDesjejum().get(horario) != null) {
-                            if (cardapio.getDesjejum().get(horario).get(r.getTipo()) != null) {
-                                cardapio.getDesjejum().get(horario).get(r.getTipo()).add(r);
+                            if (cardapio.getDesjejum().get(horario).get(r.getTipo().getValor()) != null) {
+                                cardapio.getDesjejum().get(horario).get(r.getTipo().getValor()).add(r);
                             } else {
-                                cardapio.getDesjejum().get(horario).put(r.getTipo(), new ArrayList<Refeicao>());
-                                cardapio.getDesjejum().get(horario).get(r.getTipo()).add(r);
+                                cardapio.getDesjejum().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                                cardapio.getDesjejum().get(horario).get(r.getTipo().getValor()).add(r);
                             }
 
                         } else {
                             cardapio.getDesjejum().put(horario, new HashMap<String, ArrayList<Refeicao>>());
-                            cardapio.getDesjejum().get(horario).put(r.getTipo(), new ArrayList<Refeicao>());
-                            cardapio.getDesjejum().get(horario).get(r.getTipo()).add(r);
+                            cardapio.getDesjejum().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                            cardapio.getDesjejum().get(horario).get(r.getTipo().getValor()).add(r);
                         }
 
                         break;
                     case 2:
 
                         if (cardapio.getAlmoco().get(horario) != null) {
-                            if (cardapio.getAlmoco().get(horario).get(r.getTipo()) != null) {
-                                cardapio.getAlmoco().get(horario).get(r.getTipo()).add(r);
+                            if (cardapio.getAlmoco().get(horario).get(r.getTipo().getValor()) != null) {
+                                cardapio.getAlmoco().get(horario).get(r.getTipo().getValor()).add(r);
                             } else {
-                                cardapio.getAlmoco().get(horario).put(r.getTipo(), new ArrayList<Refeicao>());
-                                cardapio.getAlmoco().get(horario).get(r.getTipo()).add(r);
+                                cardapio.getAlmoco().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                                cardapio.getAlmoco().get(horario).get(r.getTipo().getValor()).add(r);
                             }
 
                         } else {
                             cardapio.getAlmoco().put(horario, new HashMap<String, ArrayList<Refeicao>>());
-                            cardapio.getAlmoco().get(horario).put(r.getTipo(), new ArrayList<Refeicao>());
-                            cardapio.getAlmoco().get(horario).get(r.getTipo()).add(r);
+                            cardapio.getAlmoco().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                            cardapio.getAlmoco().get(horario).get(r.getTipo().getValor()).add(r);
                         }
                         break;
                     case 3:
 
                         if (cardapio.getJanta().get(horario) != null) {
-                            if (cardapio.getJanta().get(horario).get(r.getTipo()) != null) {
-                                cardapio.getJanta().get(horario).get(r.getTipo()).add(r);
+                            if (cardapio.getJanta().get(horario).get(r.getTipo().getValor()) != null) {
+                                cardapio.getJanta().get(horario).get(r.getTipo().getValor()).add(r);
                             } else {
-                                cardapio.getJanta().get(horario).put(r.getTipo(), new ArrayList<Refeicao>());
-                                cardapio.getJanta().get(horario).get(r.getTipo()).add(r);
+                                cardapio.getJanta().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                                cardapio.getJanta().get(horario).get(r.getTipo().getValor()).add(r);
                             }
 
                         } else {
                             cardapio.getJanta().put(horario, new HashMap<String, ArrayList<Refeicao>>());
-                            cardapio.getJanta().get(horario).put(r.getTipo(), new ArrayList<Refeicao>());
-                            cardapio.getJanta().get(horario).get(r.getTipo()).add(r);
+                            cardapio.getJanta().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                            cardapio.getJanta().get(horario).get(r.getTipo().getValor()).add(r);
                         }
                         break;
                 }
@@ -246,37 +263,90 @@ public class CardapioDAO implements Dao<Cardapio> {
 
     }
 
-    @Override
     public Cardapio get(int id) throws ClassNotFoundException, SQLException {
-        Cardapio cardapio = null;
-        /*
+        return null;
+    }
+    public Cardapio get(String data) throws ClassNotFoundException, SQLException {
+        Cardapio cardapio = new Cardapio();;
         Class.forName(DRIVER);
         Connection con = (Connection) DriverManager.getConnection(URL, USER, SENHA);
-        PreparedStatement ps = con.prepareStatement("select * from cardapio where id = ?");
-        ps.setInt(1, id);
+        System.out.println(data);
+        PreparedStatement ps = con.prepareStatement("select * from CARDAPIO_API where dia = ? ");
+        ps.setDate(1, Date.valueOf(data));
         ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            cardapio = new Cardapio(rs.getInt("id"),
-                    rs.getString("nome"),
-                    rs.getString("sobrenome"),
-                    rs.getString("email"),
-                    rs.getString("login"),
-                    rs.getString("senha"),
-                    rs.getInt("tipo"),
-                    rs.getBoolean("ativo"),
-                    new Cartao()
-            );
-            ps = con.prepareStatement("select * from cartao where id_cardapio = ?");
-            ps.setInt(1, cardapio.getId());
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                cardapio.getCartao().setNumero(rs.getInt("id"));
-                cardapio.getCartao().setSaldo(rs.getFloat("saldo"));
-                System.out.println(cardapio.getCartao().getSaldo());
+        
+        while (rs.next()) {
+            
+            cardapio.setData(rs.getDate("dia").toString());
+            int horario = rs.getInt("horario");
+            Refeicao r = new Refeicao();
+            r.setId(rs.getInt("id_refeicao"));
+            r.setInfoNutricional(rs.getString("info_nutricional"));
+            r.setNome(rs.getString("nome_refeicao"));
+            r.setTipo(new TipoRefeicao(rs.getInt("id_tipo"), rs.getString("nome_tipo")));
+            ps = con.prepareStatement("SELECT * FROM OBS_REFEICAO  WHERE id_refeicao = ?");
+            ps.setInt(1, r.getId());
+            ResultSet rs2 = ps.executeQuery();
+            ArrayList<String> obs = new ArrayList<>();
+            while (rs2.next()) {
+                obs.add(rs2.getString("valor"));
             }
+            r.setObservacoes(obs.toArray(new String[obs.size()]));
+            switch (horario) {
+                case 1:
+
+                    if (cardapio.getDesjejum().get(horario) != null) {
+                        if (cardapio.getDesjejum().get(horario).get(r.getTipo().getValor()) != null) {
+                            cardapio.getDesjejum().get(horario).get(r.getTipo().getValor()).add(r);
+                        } else {
+                            cardapio.getDesjejum().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                            cardapio.getDesjejum().get(horario).get(r.getTipo().getValor()).add(r);
+                        }
+
+                    } else {
+                        cardapio.getDesjejum().put(horario, new HashMap<String, ArrayList<Refeicao>>());
+                        cardapio.getDesjejum().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                        cardapio.getDesjejum().get(horario).get(r.getTipo().getValor()).add(r);
+                    }
+
+                    break;
+                case 2:
+
+                    if (cardapio.getAlmoco().get(horario) != null) {
+                        if (cardapio.getAlmoco().get(horario).get(r.getTipo().getValor()) != null) {
+                            cardapio.getAlmoco().get(horario).get(r.getTipo().getValor()).add(r);
+                        } else {
+                            cardapio.getAlmoco().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                            cardapio.getAlmoco().get(horario).get(r.getTipo().getValor()).add(r);
+                        }
+
+                    } else {
+                        cardapio.getAlmoco().put(horario, new HashMap<String, ArrayList<Refeicao>>());
+                        cardapio.getAlmoco().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                        cardapio.getAlmoco().get(horario).get(r.getTipo().getValor()).add(r);
+                    }
+                    break;
+                case 3:
+
+                    if (cardapio.getJanta().get(horario) != null) {
+                        if (cardapio.getJanta().get(horario).get(r.getTipo().getValor()) != null) {
+                            cardapio.getJanta().get(horario).get(r.getTipo().getValor()).add(r);
+                        } else {
+                            cardapio.getJanta().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                            cardapio.getJanta().get(horario).get(r.getTipo().getValor()).add(r);
+                        }
+
+                    } else {
+                        cardapio.getJanta().put(horario, new HashMap<String, ArrayList<Refeicao>>());
+                        cardapio.getJanta().get(horario).put(r.getTipo().getValor(), new ArrayList<Refeicao>());
+                        cardapio.getJanta().get(horario).get(r.getTipo().getValor()).add(r);
+                    }
+                    break;
+
+            }
+
         }
-         */
+
         return cardapio;
 
     }

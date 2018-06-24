@@ -5,20 +5,27 @@
  */
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+
 
 /**
  *
  * @author root
  */
-public class Cardapio {
+public class Cardapio implements Serializable {
     
-    private HashMap<Integer, HashMap<String,ArrayList<Refeicao>>> desjejum =  new HashMap<Integer, HashMap<String,ArrayList<Refeicao>>> () ;
+    private HashMap<Integer, HashMap<String,ArrayList<Refeicao>>> desjejum ;
     private HashMap<Integer, HashMap<String,ArrayList<Refeicao>>>  almoco ;
-    private HashMap<Integer, HashMap<String,ArrayList<Refeicao>>>  janta;
+    private HashMap<Integer, HashMap<String,ArrayList<Refeicao>>>  janta ;
     private String data;
+
+    public Cardapio() {
+        this.desjejum = new HashMap<> ();
+        this.janta = new HashMap<> ();
+        this.almoco = new HashMap<> ();
+    }
 
     public void setDesjejum(HashMap<Integer, HashMap<String,ArrayList<Refeicao>>>  desjejum) {
         this.desjejum = desjejum;
@@ -72,10 +79,8 @@ public class Cardapio {
             return false;
         }
         final Cardapio other = (Cardapio) obj;
-        if (!(this.data.equals(other.getData()))) {
-            return false;
-        }
-        return true;
+        
+        return this.data.equals(other.getData());
     }
     
     

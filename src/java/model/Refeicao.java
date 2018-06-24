@@ -11,7 +11,7 @@ package model;
  */
 public class Refeicao {
     private int id ;
-    private String tipo;
+    private TipoRefeicao tipo;
     private String nome;
     private String infoNutricional;
     private String[] observacoes;
@@ -24,11 +24,11 @@ public class Refeicao {
         this.id = id;
     }
 
-    public String getTipo() {
+    public TipoRefeicao getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(TipoRefeicao tipo) {
         this.tipo = tipo;
     }
 

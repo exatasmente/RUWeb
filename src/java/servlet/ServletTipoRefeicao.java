@@ -5,7 +5,7 @@
  */
 package servlet;
 
-import controller.ControleCardapio;
+import controller.ControleTipoRefeicao;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,14 +16,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.Cardapio;
+import model.TipoRefeicao;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  *
  * @author root
  */
-public class ServletCardapio extends HttpServlet {
+public class ServletTipoRefeicao extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -37,14 +37,18 @@ public class ServletCardapio extends HttpServlet {
         response.setContentType("application/json");
         String jsonStr = "{\"message\" : \"Internal Error \", \"Status\" : \"500\"}";
         PrintWriter out = response.getWriter();
-        ControleCardapio res = new ControleCardapio();
+        ControleTipoRefeicao res = new ControleTipoRefeicao();
 
         try {
             String querry = request.getPathInfo();
+            System.out.println(querry);
             if (querry != null) {
-
                 String data = querry.replaceFirst("/", "");
-                jsonStr = res.get(data);
+                if (Integer.getInteger(data) != null) {
+                    jsonStr = res.get(Integer.parseInt(data));
+                } else {
+                    jsonStr = res.get(data);
+                }
             } else {
                 jsonStr = res.lista();
             }
@@ -64,8 +68,8 @@ public class ServletCardapio extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
-        ControleCardapio res = new ControleCardapio();
-        String jsonStr = "{\"message\" : \"Cardapio Criado Com Sucesso \", \"Status\" : \"200\"}";
+        ControleTipoRefeicao res = new ControleTipoRefeicao();
+        String jsonStr = "{\"message\" : \"TipoRefeicao Criado Com Sucesso \", \"Status\" : \"200\"}";
         try {
             ObjectMapper mapperObj = new ObjectMapper();
             StringBuffer jb = new StringBuffer();
@@ -77,8 +81,8 @@ public class ServletCardapio extends HttpServlet {
 
             }
             System.out.println(jb.toString());
-            Cardapio cardapio= mapperObj.readValue(jb.toString(), Cardapio.class);
-            res.add(cardapio);
+            TipoRefeicao refeicao = mapperObj.readValue(jb.toString(), TipoRefeicao.class);
+            res.add(refeicao);
 
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
@@ -93,8 +97,8 @@ public class ServletCardapio extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
-        ControleCardapio res = new ControleCardapio();
-        String jsonStr = "{\"message\" : \"Cardapio Alterado Com Sucesso \", \"Status\" : \"200\"}";
+        ControleTipoRefeicao res = new ControleTipoRefeicao();
+        String jsonStr = "{\"message\" : \"TipoRefeicao Alterado Com Sucesso \", \"Status\" : \"200\"}";
         try {
             ObjectMapper mapperObj = new ObjectMapper();
             StringBuffer jb = new StringBuffer();
@@ -106,8 +110,8 @@ public class ServletCardapio extends HttpServlet {
 
             }
             System.out.println(jb.toString());
-            Cardapio cardapio= mapperObj.readValue(jb.toString(), Cardapio.class);
-            res.update(cardapio);
+            TipoRefeicao refeicao = mapperObj.readValue(jb.toString(), TipoRefeicao.class);
+            res.update(refeicao);
 
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
@@ -123,8 +127,8 @@ public class ServletCardapio extends HttpServlet {
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
-        ControleCardapio res = new ControleCardapio();
-        String jsonStr = "{\"message\" : \"Cardapio Removido Com Sucesso \", \"Status\" : \"200\"}";
+        ControleTipoRefeicao res = new ControleTipoRefeicao();
+        String jsonStr = "{\"message\" : \"TipoRefeicao Removido Com Sucesso \", \"Status\" : \"200\"}";
         try {
             ObjectMapper mapperObj = new ObjectMapper();
             StringBuffer jb = new StringBuffer();
@@ -136,8 +140,8 @@ public class ServletCardapio extends HttpServlet {
 
             }
             System.out.println(jb.toString());
-            Cardapio cardapio= mapperObj.readValue(jb.toString(), Cardapio.class);
-            //res.remove(cardapio.getAlmoco());
+            TipoRefeicao refeicao= mapperObj.readValue(jb.toString(), TipoRefeicao.class);
+            //res.remove(refeicao.getAlmoco());
 
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
@@ -148,7 +152,7 @@ public class ServletCardapio extends HttpServlet {
     }
 
     @Override
-*/
+     */
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
